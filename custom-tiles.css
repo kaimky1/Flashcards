@@ -1,0 +1,134 @@
+:root {
+  --ink: #0c2740;
+  --muted: #1f3a5a;
+  --accent: #ffb703;
+  --card: #ffffff;
+  --shadow: 0 10px 26px rgba(12, 39, 64, 0.14);
+  font-family: "Fredoka", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #b9ecff;
+  color: var(--ink);
+}
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px 18px 40px;
+}
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.eyebrow {
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 1.3px;
+  margin: 0;
+  color: #0b6bb4;
+  font-weight: 700;
+}
+.lede {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+.card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+.form label {
+  display: block;
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: 10px;
+}
+.form input[type="text"],
+.form textarea {
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(12,39,64,0.12);
+  font-size: 14px;
+}
+.form textarea {
+  resize: vertical;
+}
+.row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 10px;
+}
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+.btn {
+  border: none;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+  font-size: 14px;
+}
+.btn.primary {
+  background: linear-gradient(135deg, #ffd43b, #ff9f1a);
+  color: #4a3000;
+  box-shadow: 0 10px 24px rgba(255, 159, 26, 0.4);
+}
+.btn.ghost {
+  background: white;
+  color: #0e4b7c;
+  border: 2px solid #0e4b7c;
+}
+.btn:hover {
+  transform: translateY(-1px);
+}
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+
+.list {
+  margin: 14px 0;
+  border: 1px solid rgba(12,39,64,0.12);
+  border-radius: 12px;
+}
+.list-header, .pairs > div {
+  display: grid;
+  grid-template-columns: 1fr 1fr 120px;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 10px;
+}
+.list-header {
+  background: rgba(12,39,64,0.05);
+  font-weight: 700;
+}
+.pairs > div:nth-child(odd) {
+  background: rgba(12,39,64,0.03);
+}
+.pill-btn {
+  background: none;
+  border: 1px solid rgba(12,39,64,0.16);
+  border-radius: 999px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+.btn.full { width: 100%; margin-top: 8px; }
+
+@media (max-width: 900px) {
+  .top { flex-direction: column; align-items: flex-start; }
+}

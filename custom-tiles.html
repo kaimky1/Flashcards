@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Custom Tile Builder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="custom-tiles.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="top">
+      <div>
+        <p class="eyebrow">Teacher tools</p>
+        <h1>Custom Deck Builder</h1>
+        <p class="lede">Add your own question/answer pairs and a subject name. Copy the JSON to reuse in the matcher or share with students.</p>
+      </div>
+      <a class="btn ghost" href="flashcard.html">Back to game</a>
+    </header>
+
+    <main class="grid">
+      <section class="card form">
+        <h2>Settings</h2>
+        <label>Subject name
+          <input id="subjectInput" type="text" placeholder="e.g., Space Facts" />
+        </label>
+        <div class="row">
+          <label>Question text
+            <input id="questionInput" type="text" placeholder="e.g., 7 + 5 = ?" />
+          </label>
+          <label>Answer text
+            <input id="answerInput" type="text" placeholder="e.g., 12" />
+          </label>
+        </div>
+
+        <div class="actions">
+          <button id="addPair" class="btn primary">Add pair</button>
+          <button id="resetForm" class="btn ghost">Reset</button>
+        </div>
+
+        <div class="list">
+          <div class="list-header">
+            <span>Question</span>
+            <span>Answer</span>
+            <span>Actions</span>
+          </div>
+          <div id="pairList" class="pairs"></div>
+        </div>
+
+        <label>Config output
+          <textarea id="configOutput" rows="6" readonly></textarea>
+        </label>
+        <button id="copyConfig" class="btn primary full">Copy JSON</button>
+      </section>
+
+    </main>
+  </div>
+  <script src="custom-tiles.js"></script>
+</body>
+</html>
