@@ -1,177 +1,211 @@
-// Preloaded Elementary Math flashcards
-const preloadedCards = [
-  { type: 'mc', question: '2 + 2 = ?', choices: ['3','4','5','6'], answer: '4' },
-  { type: 'mc', question: '5 - 3 = ?', choices: ['1','2','3','4'], answer: '2' },
-  { type: 'input', question: '3 x 4 = ?', answer: '12' },
-  { type: 'flip', question: 'What is the square of 5?', back: '25' }
-];
+const questionBoard = document.getElementById('questionBoard');
+const answerBoard = document.getElementById('answerBoard');
+const statusEl = document.getElementById('status');
+const matchesEl = document.getElementById('matches');
+const triesEl = document.getElementById('tries');
+const streakEl = document.getElementById('streak');
+const pairsCountEl = document.getElementById('pairsCount');
 
-// App state
-let deck = [];
-let currentIndex = 0;
-let score = 0;
+let questionCards = [];
+let answerCards = [];
+let firstPick = null;
+let secondPick = null;
+let lock = false;
+let matches = 0;
+let tries = 0;
 let streak = 0;
-let soundOn = true;
+let totalPairs = 0;
 
-// Load progress from localStorage
-function loadProgress() {
-  const savedDeck = localStorage.getItem('flashcardDeck');
-  if(savedDeck) deck = JSON.parse(savedDeck); else deck = [...preloadedCards];
-  score = parseInt(localStorage.getItem('score')) || 0;
-  streak = parseInt(localStorage.getItem('streak')) || 0;
+function randomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// Save progress
-function saveProgress() {
-  localStorage.setItem('flashcardDeck', JSON.stringify(deck));
-  localStorage.setItem('score', score);
-  localStorage.setItem('streak', streak);
-}
+function createMathPairs(count = 8) {
+  const pairs = [];
+  const usedAnswers = new Set();
+  const ops = ['+', '-', '×'];
+  let attempts = 0;
 
-// Update score display
-function updateStats() {
-  document.getElementById('score').textContent = score;
-  document.getElementById('streak').textContent = streak;
-  document.getElementById('deckSize').textContent = deck.length;
-  const pct = ((currentIndex+1)/deck.length)*100;
-  document.getElementById('progressBar').style.width = pct+'%';
-}
+  while (pairs.length < count && attempts < 200) {
+    attempts += 1;
+    const op = ops[randomInt(0, ops.length - 1)];
+    let a = randomInt(1, 10);
+    let b = randomInt(1, 10);
+    if (op === '-') {
+      if (b > a) [a, b] = [b, a];
+    }
+    if (op === '×') {
+      a = randomInt(1, 9);
+      b = randomInt(1, 9);
+    }
 
-// Render current card
-function renderCard() {
-  const card = deck[currentIndex];
-  document.getElementById('questionText').textContent = card.question;
-  document.getElementById('cardType').textContent = `Type: ${card.type}`;
-  document.getElementById('cardIndex').textContent = `Card ${currentIndex+1} / ${deck.length}`;
-  const interactive = document.getElementById('interactiveArea');
-  interactive.innerHTML = '';
-  document.getElementById('feedback').textContent = '';
+    const question = `${a} ${op} ${b}`;
+    const answerVal = op === '+'
+      ? (a + b)
+      : op === '-'
+        ? (a - b)
+        : (a * b);
+    const answer = answerVal.toString();
 
-  if(card.type==='mc'){
-    card.choices.forEach(c=>{
-      const btn = document.createElement('button');
-      btn.textContent = c;
-      btn.className='choice btn';
-      btn.onclick=()=>checkAnswer(c);
-      interactive.appendChild(btn);
-    });
-  } else if(card.type==='input'){
-    const inp = document.createElement('input');
-    inp.className='input-answer';
-    inp.type='text';
-    const submit = document.createElement('button');
-    submit.textContent='Submit';
-    submit.className='btn';
-    submit.onclick=()=>checkAnswer(inp.value);
-    interactive.appendChild(inp);
-    interactive.appendChild(submit);
-  } else if(card.type==='flip'){
-    const flipBtn = document.createElement('button');
-    flipBtn.className='btn';
-    flipBtn.textContent='Show Answer';
-    flipBtn.onclick=()=>document.getElementById('feedback').textContent=card.back;
-    interactive.appendChild(flipBtn);
+    if (usedAnswers.has(answer)) continue;
+    usedAnswers.add(answer);
+    pairs.push({ id: `pair-${pairs.length}-${Date.now()}`, question, answer });
   }
+  return pairs;
 }
 
-// Check answer
-function checkAnswer(val){
-  const card = deck[currentIndex];
-  if(val===card.answer){
-    score++; streak++;
-    document.getElementById('feedback').textContent='✅ Correct!';
-    if(soundOn) new Audio('https://freesound.org/data/previews/320/320655_5260872-lq.mp3').play();
+function shuffle(arr) {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function buildDeck() {
+  const pairs = createMathPairs();
+  totalPairs = pairs.length;
+  pairsCountEl.textContent = totalPairs;
+  questionCards = shuffle(pairs.map(pair => ({ id: pair.id, kind: 'question', text: pair.question })));
+  answerCards = shuffle(pairs.map(pair => ({ id: pair.id, kind: 'answer', text: pair.answer })));
+  renderBoards();
+  resetRoundStats();
+}
+
+function resetRoundStats() {
+  matches = 0;
+  tries = 0;
+  streak = 0;
+  updateScoreboard();
+  firstPick = null;
+  secondPick = null;
+  lock = false;
+  setStatus('Tap a question first, then match the answer side.');
+}
+
+function setStatus(message) {
+  statusEl.textContent = message;
+}
+
+function updateScoreboard() {
+  matchesEl.textContent = matches;
+  triesEl.textContent = tries;
+  streakEl.textContent = streak;
+}
+
+function renderBoards() {
+  renderColumn(questionBoard, questionCards);
+  renderColumn(answerBoard, answerCards);
+}
+
+function renderColumn(container, cards) {
+  container.innerHTML = '';
+  cards.forEach((card, index) => {
+    const tile = document.createElement('button');
+    tile.className = 'tile';
+    tile.setAttribute('data-id', card.id);
+    tile.setAttribute('data-kind', card.kind);
+    tile.setAttribute('data-index', index.toString());
+    tile.setAttribute('aria-label', `${card.kind} card`);
+
+    const inner = document.createElement('div');
+    inner.className = 'tile-inner';
+
+    const front = document.createElement('div');
+    front.className = 'face front';
+    front.innerHTML = `<span>Flip me!</span>`;
+
+    const back = document.createElement('div');
+    back.className = `face back ${card.kind === 'question' ? 'question' : 'answer'}`;
+    back.innerHTML = `
+      <span class="badge ${card.kind}">${card.kind}</span>
+      <div class="text">${card.text}</div>
+    `;
+
+    inner.appendChild(front);
+    inner.appendChild(back);
+    tile.appendChild(inner);
+    tile.addEventListener('click', () => handleFlip(tile, card.kind));
+    container.appendChild(tile);
+  });
+}
+
+function handleFlip(tile, kind) {
+  if (lock || tile.classList.contains('matched')) return;
+
+  // Prevent starting on the answer side.
+  if (!firstPick && kind !== 'question') {
+    setStatus('Start with a question card on the left side.');
+    return;
+  }
+
+  // Change selected question if a new one is chosen.
+  if (firstPick && !secondPick && kind === 'question') {
+    firstPick.classList.remove('flipped');
+    tile.classList.add('flipped');
+    firstPick = tile;
+    setStatus('Swapped question. Now find the matching answer!');
+    return;
+  }
+
+  tile.classList.add('flipped');
+
+  if (!firstPick) {
+    firstPick = tile;
+    setStatus('Now find the matching answer!');
+    return;
+  }
+
+  secondPick = tile;
+  lock = true;
+  tries += 1;
+  checkForMatch();
+}
+
+function cardsMatch() {
+  return firstPick.dataset.id === secondPick.dataset.id
+    && firstPick.dataset.kind !== secondPick.dataset.kind;
+}
+
+function checkForMatch() {
+  if (cardsMatch()) {
+    matches += 1;
+    streak += 1;
+    firstPick.classList.add('matched');
+    secondPick.classList.add('matched');
+    setStatus('Aye aye! You found a pair.');
+    resetPicks();
+    if (matches === totalPairs) {
+      setStatus('Victory! All pairs matched. Hit "New round" to shuffle again.');
+    }
   } else {
-    streak=0;
-    document.getElementById('feedback').textContent=`❌ Incorrect! Answer: ${card.answer||card.back}`;
-    if(soundOn) new Audio('https://freesound.org/data/previews/320/320659_5260872-lq.mp3').play();
+    streak = 0;
+    setStatus('Not quite! Try again.');
+    setTimeout(() => {
+      firstPick.classList.remove('flipped');
+      secondPick.classList.remove('flipped');
+      resetPicks();
+    }, 750);
   }
-  saveProgress();
-  updateStats();
+  updateScoreboard();
 }
 
-// Next / Prev
-document.getElementById('nextBtn').onclick = ()=>{
-  if(currentIndex<deck.length-1) currentIndex++;
-  renderCard();
-  updateStats();
-};
-document.getElementById('prevBtn').onclick = ()=>{
-  if(currentIndex>0) currentIndex--;
-  renderCard();
-  updateStats();
-};
+function resetPicks() {
+  firstPick = null;
+  secondPick = null;
+  lock = false;
+}
 
-// Toggle sound
-document.getElementById('soundToggle').onclick = ()=>{
-  soundOn = !soundOn;
-  document.getElementById('soundToggle').textContent = 'Sound: '+(soundOn?'ON':'OFF');
-};
+document.getElementById('newRound').addEventListener('click', () => {
+  buildDeck();
+});
 
-// Reset progress
-document.getElementById('resetBtn').onclick = ()=>{
-  localStorage.clear();
-  loadProgress();
-  score=0; streak=0; currentIndex=0;
-  renderCard();
-  updateStats();
-};
+document.getElementById('resetStats').addEventListener('click', () => {
+  resetRoundStats();
+  document.querySelectorAll('.tile').forEach(tile => {
+    tile.classList.remove('flipped', 'matched');
+  });
+});
 
-// Shuffle deck
-document.getElementById('shuffleBtn').onclick = ()=>{
-  deck.sort(()=>Math.random()-0.5);
-  currentIndex=0;
-  renderCard();
-  updateStats();
-};
-
-// Mark known (flip card)
-document.getElementById('markKnownBtn').onclick = ()=>{
-  score++; streak++;
-  updateStats();
-};
-
-// Add card logic
-document.getElementById('mcFields').style.display='block';
-
-document.getElementById('cardTypeSelect').onchange = e=>{
-  const type=e.target.value;
-  document.getElementById('mcFields').style.display='none';
-  document.getElementById('inputFields').style.display='none';
-  document.getElementById('flipFields').style.display='none';
-  if(type==='mc') document.getElementById('mcFields').style.display='block';
-  if(type==='input') document.getElementById('inputFields').style.display='block';
-  if(type==='flip') document.getElementById('flipFields').style.display='block';
-};
-document.getElementById('addCardBtn').onclick = ()=>{
-  const type=document.getElementById('cardTypeSelect').value;
-  const question=document.getElementById('qText').value;
-  let card={type, question};
-  if(type==='mc'){
-    const choices=document.getElementById('mcChoices').value.split(',').map(c=>c.trim());
-    const answer=document.getElementById('mcAnswer').value.trim();
-    card.choices=choices; card.answer=answer;
-  } else if(type==='input'){
-    card.answer=document.getElementById('inputAnswer').value.trim();
-  } else if(type==='flip'){
-    card.back=document.getElementById('flipBack').value.trim();
-  }
-  deck.push(card);
-  saveProgress();
-  updateStats();
-  renderCard();
-};
-
-// Reset to preloaded
-document.getElementById('importBtn').onclick = ()=>{
-  deck=[...preloadedCards];
-  currentIndex=0;
-  renderCard();
-  updateStats();
-};
-
-// Initialize
-loadProgress();
-renderCard();
-updateStats();
-
+buildDeck();
