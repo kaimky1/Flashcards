@@ -5,6 +5,8 @@ const matchesEl = document.getElementById('matches');
 const triesEl = document.getElementById('tries');
 const streakEl = document.getElementById('streak');
 const pairsCountEl = document.getElementById('pairsCount');
+const timerEl = document.getElementById('timer');
+const bestTimeEl = document.getElementById('bestTime');
 const subjectSelect = document.getElementById('subjectSelect');
 
 let questionCards = [];
@@ -17,6 +19,10 @@ let tries = 0;
 let streak = 0;
 let totalPairs = 0;
 let currentSubject = 'math';
+let timerInterval = null;
+let elapsedSeconds = 0;
+let bestTimes = {};
+const PREVIEW_MS = 5000;
 
 function loadCustomDecks() {
   try {
@@ -30,7 +36,7 @@ function loadCustomDecks() {
 
 function populateSubjectSelect() {
   const decks = loadCustomDecks();
-  subjectSelect.innerHTML = `<option value="math">Math (auto)</option>`;
+  subjectSelect.innerHTML = `<option value="math">Math (default)</option>`;
   decks.forEach(deck => {
     const opt = document.createElement('option');
     opt.value = deck.subject;
@@ -56,6 +62,7 @@ function createMathPairs(count = 8) {
     let a = randomInt(1, 10);
     let b = randomInt(1, 10);
     if (op === '-') {
+      // Swap to ensure a > b
       if (b > a) [a, b] = [b, a];
     }
     if (op === '×') {
@@ -95,6 +102,8 @@ function buildDeck(customPairs) {
   answerCards = shuffle(pairs.map(pair => ({ id: pair.id || `pair-${Math.random()}`, kind: 'answer', text: pair.answer })));
   renderBoards();
   resetRoundStats();
+  updateBestDisplay();
+  previewBoard();
 }
 
 function resetRoundStats() {
@@ -118,9 +127,64 @@ function updateScoreboard() {
   streakEl.textContent = streak;
 }
 
+function formatTime(totalSeconds) {
+  const mins = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+  const secs = (totalSeconds % 60).toString().padStart(2, '0');
+  return `${mins}:${secs}`;
+}
+
+function updateTimerDisplay() {
+  timerEl.textContent = formatTime(elapsedSeconds);
+}
+
+function startTimer() {
+  if (timerInterval) clearInterval(timerInterval);
+  elapsedSeconds = 0;
+  updateTimerDisplay();
+  timerInterval = setInterval(() => {
+    elapsedSeconds += 1;
+    updateTimerDisplay();
+  }, 1000);
+}
+
+function stopTimer() {
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = null;
+}
+
+function loadBestTimes() {
+  try {
+    const stored = localStorage.getItem('bestTimes');
+    bestTimes = stored ? JSON.parse(stored) : {};
+  } catch (e) {
+    bestTimes = {};
+  }
+}
+
+function saveBestTimes() {
+  localStorage.setItem('bestTimes', JSON.stringify(bestTimes));
+}
+
+function updateBestDisplay() {
+  const best = bestTimes[currentSubject];
+  bestTimeEl.textContent = Number.isFinite(best) ? formatTime(best) : '--:--';
+}
+
 function renderBoards() {
   renderColumn(questionBoard, questionCards);
   renderColumn(answerBoard, answerCards);
+}
+
+function previewBoard() {
+  lock = true;
+  setStatus('Memorize the board!');
+  document.querySelectorAll('.tile').forEach(tile => tile.classList.add('flipped'));
+  setTimeout(() => {
+    document.querySelectorAll('.tile').forEach(tile => tile.classList.remove('flipped', 'matched'));
+    lock = false;
+    startTimer();
+    setStatus('Tap a question first, then match the answer side.');
+  }, PREVIEW_MS);
 }
 
 function renderColumn(container, cards) {
@@ -139,7 +203,7 @@ function renderColumn(container, cards) {
     const front = document.createElement('div');
     front.className = 'face front';
     front.style.backgroundImage = 'url(pictures/PatrickStar.png)';
-    front.innerHTML = `<span class="sr-only">Flip me</span>`;
+    front.innerHTML = '';
 
     const back = document.createElement('div');
     back.className = `face back ${card.kind === 'question' ? 'question' : 'answer'}`;
@@ -203,6 +267,13 @@ function checkForMatch() {
     resetPicks();
     if (matches === totalPairs) {
       setStatus('Victory! All pairs matched. Hit "New round" to shuffle again.');
+      stopTimer();
+      const best = bestTimes[currentSubject];
+      if (!Number.isFinite(best) || elapsedSeconds < best) {
+        bestTimes[currentSubject] = elapsedSeconds;
+        saveBestTimes();
+        updateBestDisplay();
+      }
     }
   } else {
     streak = 0;
@@ -233,6 +304,7 @@ document.getElementById('resetStats').addEventListener('click', () => {
   document.querySelectorAll('.tile').forEach(tile => {
     tile.classList.remove('flipped', 'matched');
   });
+  previewBoard();
 });
 
 subjectSelect.addEventListener('change', () => {
@@ -243,5 +315,6 @@ subjectSelect.addEventListener('change', () => {
   setStatus(deck ? `Using subject: ${currentSubject}` : 'Tap a question first, then match the answer side.');
 });
 
+loadBestTimes();
 populateSubjectSelect();
 buildDeck();
