@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>SpongeBob Math Match</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Patrick+Hand&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="flashcard.css" />
+  <link rel="stylesheet" href="flashcard.css" />
 </head>
 <body>
   <div class="reef">
@@ -42,69 +42,44 @@
         </div>
       </div>
     </header>
-        </div>
 
-        <div id="mcFields" style="display:none;margin-top:10px;">
-          <label>Choices (comma separated)</label>
-          <input id="mcChoices" type="text" placeholder="e.g., 3,4,5,6" />
-          <label style="margin-top:6px;">Correct choice (exact match)</label>
-          <input id="mcAnswer" type="text" placeholder="e.g., 4" />
-        </div>
-
-        <div id="inputFields" style="display:none;margin-top:10px;">
-          <label>Correct answer (exact match)</label>
-          <input id="inputAnswer" type="text" placeholder="e.g., 12" />
-        </div>
-
-        <div id="flipFields" style="display:none;margin-top:10px;">
-          <label>Back / Answer text</label>
-          <textarea id="flipBack" placeholder="Write the answer or explanation here"></textarea>
-        </div>
-
-        <div class="form-row">
-          <button class="btn" id="addCardBtn">Add Card</button>
-          <button class="btn secondary" id="importBtn">Reset to Preloaded</button>
-        </div>
-
-        <div style="margin-top:12px;">
-          <div class="small muted">Deck size: <strong id="deckSize">0</strong></div>
-          <div class="progress" style="margin-top:6px;">
-            <i id="progressBar"></i>
+    <main class="layout">
+      <section class="board-wrap">
+        <div class="boards">
+          <div class="board-column">
+            <div class="column-title">Questions</div>
+            <div class="board" id="questionBoard" aria-live="polite"></div>
+          </div>
+          <div class="board-column">
+            <div class="column-title">Answers</div>
+            <div class="board" id="answerBoard" aria-live="polite"></div>
           </div>
         </div>
-      </div>
-
-      <div class="panel">
-        <strong>How to play</strong>
-        <ol style="padding-left:18px; margin-top:8px; font-size:14px; color:var(--muted);">
-          <li>Read the question and answer using the options.</li>
-          <li>+1 point for each correct answer.</li>
-          <li>Flip cards let kids self-check — click "I knew this" to earn the point.</li>
-          <li>Progress is saved locally — clear with Reset Progress.</li>
-        </ol>
-        <div style="margin-top:8px;">
-          <button class="btn" id="soundToggle">Sound: ON</button>
+      </section>
+      <aside class="sidebar">
+        <div class="card info">
+          <h2>How to play</h2>
+          <ul>
+            <li>Flip a yellow <strong>question</strong>, then flip the blue <strong>answer</strong> that matches.</li>
+            <li>Matched pairs stay flipped. Clear the board to win the round.</li>
+            <li>Keep streaks alive by matching without misses.</li>
+            <li>New round shuffles fresh math facts.</li>
+          </ul>
         </div>
-      </div>
-
-      <div class="panel">
-        <strong>Quick Actions</strong>
-        <div style="display:flex;gap:8px;margin-top:8px;">
-          <button class="btn secondary" id="prevBtn">◀ Prev</button>
-          <button class="btn" id="markKnownBtn">I KNEW THIS</button>
-          <button class="btn secondary" id="exportBtn">Export Deck</button>
+        <div class="card legend">
+          <h3>Card legend</h3>
+          <div class="legend-row">
+            <span class="badge question">Question</span>
+            <span class="legend-text">Tap this first</span>
+          </div>
+          <div class="legend-row">
+            <span class="badge answer">Answer</span>
+            <span class="legend-text">Find the match</span>
+          </div>
         </div>
-        <div style="margin-top:8px;">
-          <textarea id="exportArea" placeholder="Exported JSON will appear here" style="width:100%;"></textarea>
-        </div>
-      </div>
-
-    </aside>
+      </aside>
+    </main>
   </div>
-
-  <footer class="muted">Built for a classroom demo • Refresh keeps deck but Reset Progress clears scores</footer>
-</div>
-
-<script src="flashcard.js"></script>
+  <script src="flashcard.js"></script>
 </body>
 </html>
