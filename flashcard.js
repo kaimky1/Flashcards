@@ -5,6 +5,7 @@ const matchesEl = document.getElementById('matches');
 const triesEl = document.getElementById('tries');
 const streakEl = document.getElementById('streak');
 const pairsCountEl = document.getElementById('pairsCount');
+const subjectSelect = document.getElementById('subjectSelect');
 
 let questionCards = [];
 let answerCards = [];
@@ -15,6 +16,29 @@ let matches = 0;
 let tries = 0;
 let streak = 0;
 let totalPairs = 0;
+let currentSubject = 'math';
+
+function loadCustomDecks() {
+  try {
+    const stored = localStorage.getItem('customDecks');
+    if (!stored) return [];
+    return JSON.parse(stored);
+  } catch (e) {
+    return [];
+  }
+}
+
+function populateSubjectSelect() {
+  const decks = loadCustomDecks();
+  subjectSelect.innerHTML = `<option value="math">Math (auto)</option>`;
+  decks.forEach(deck => {
+    const opt = document.createElement('option');
+    opt.value = deck.subject;
+    opt.textContent = deck.subject;
+    subjectSelect.appendChild(opt);
+  });
+  subjectSelect.value = currentSubject;
+}
 
 function randomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -63,12 +87,12 @@ function shuffle(arr) {
   return copy;
 }
 
-function buildDeck() {
-  const pairs = createMathPairs();
+function buildDeck(customPairs) {
+  const pairs = customPairs && customPairs.length ? customPairs : createMathPairs();
   totalPairs = pairs.length;
   pairsCountEl.textContent = totalPairs;
-  questionCards = shuffle(pairs.map(pair => ({ id: pair.id, kind: 'question', text: pair.question })));
-  answerCards = shuffle(pairs.map(pair => ({ id: pair.id, kind: 'answer', text: pair.answer })));
+  questionCards = shuffle(pairs.map(pair => ({ id: pair.id || `pair-${Math.random()}`, kind: 'question', text: pair.question })));
+  answerCards = shuffle(pairs.map(pair => ({ id: pair.id || `pair-${Math.random()}`, kind: 'answer', text: pair.answer })));
   renderBoards();
   resetRoundStats();
 }
@@ -199,7 +223,9 @@ function resetPicks() {
 }
 
 document.getElementById('newRound').addEventListener('click', () => {
-  buildDeck();
+  const deck = loadCustomDecks().find(d => d.subject === currentSubject);
+  const pairs = deck ? deck.pairs.map((p, idx) => ({ id: `c-${idx}-${currentSubject}`, question: p.question, answer: p.answer })) : null;
+  buildDeck(pairs);
 });
 
 document.getElementById('resetStats').addEventListener('click', () => {
@@ -209,4 +235,13 @@ document.getElementById('resetStats').addEventListener('click', () => {
   });
 });
 
+subjectSelect.addEventListener('change', () => {
+  currentSubject = subjectSelect.value;
+  const deck = loadCustomDecks().find(d => d.subject === currentSubject);
+  const pairs = deck ? deck.pairs.map((p, idx) => ({ id: `c-${idx}-${currentSubject}`, question: p.question, answer: p.answer })) : null;
+  buildDeck(pairs);
+  setStatus(deck ? `Using subject: ${currentSubject}` : 'Tap a question first, then match the answer side.');
+});
+
+populateSubjectSelect();
 buildDeck();

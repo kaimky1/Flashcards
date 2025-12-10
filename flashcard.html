@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SpongeBob Math Match</title>
+  <title>SpongeBob Flashcard Match</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Patrick+Hand&display=swap" rel="stylesheet">
@@ -13,13 +13,19 @@
   <div class="reef">
     <header class="hero">
       <div class="hero-text">
-        <p class="eyebrow">Spongebob Math Match</p>
-        <h1>SpongeBob Math Match</h1>
-        <p class="lede">Flip a yellow question card and hunt for the matching blue answer. All pairs are quick, kid-friendly math.</p>
+        <p class="eyebrow">Spongebob Flashcard Match</p>
+        <h1>SpongeBob Flashcard Match</h1>
+        <p class="lede">Flip a yellow question card and hunt for the matching blue answer.</p>
         <div class="cta-row">
           <button id="newRound" class="btn primary">New round</button>
           <button id="resetStats" class="btn ghost">Reset stats</button>
           <a class="btn ghost" href="custom-tiles.html">Custom tiles</a>
+        </div>
+        <div class="subject-picker">
+          <label for="subjectSelect">Subject</label>
+          <select id="subjectSelect">
+            <option value="math">Math (auto)</option>
+          </select>
         </div>
         <div class="status" id="status">Tap a question first, then match the answer side.</div>
       </div>
@@ -64,7 +70,6 @@
             <li>Flip a yellow <strong>question</strong>, then flip the blue <strong>answer</strong> that matches.</li>
             <li>Matched pairs stay flipped. Clear the board to win the round.</li>
             <li>Keep streaks alive by matching without misses.</li>
-            <li>New round shuffles fresh math facts.</li>
           </ul>
         </div>
         <div class="card legend">

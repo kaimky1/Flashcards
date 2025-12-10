@@ -26,6 +26,11 @@
         <label>Subject name
           <input id="subjectInput" type="text" placeholder="e.g., Space Facts" />
         </label>
+        <label>Saved subjects
+          <select id="savedSelect">
+            <option value="">Select saved subject…</option>
+          </select>
+        </label>
         <div class="row">
           <label>Question text
             <input id="questionInput" type="text" placeholder="e.g., 7 + 5 = ?" />
@@ -52,7 +57,11 @@
         <label>Config output
           <textarea id="configOutput" rows="6" readonly></textarea>
         </label>
-        <button id="copyConfig" class="btn primary full">Copy JSON</button>
+        <div class="actions" style="margin-top:8px;">
+          <button id="copyConfig" class="btn primary">Copy JSON</button>
+          <button id="saveDeck" class="btn ghost">Save to game</button>
+        </div>
+        <div id="saveStatus" class="muted small"></div>
       </section>
 
     </main>

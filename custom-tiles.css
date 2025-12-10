@@ -55,6 +55,7 @@ body {
   margin-top: 10px;
 }
 .form input[type="text"],
+.form select,
 .form textarea {
   width: 100%;
   margin-top: 6px;
@@ -75,6 +76,7 @@ body {
   display: flex;
   gap: 10px;
   margin-top: 12px;
+  flex-wrap: wrap;
 }
 .btn {
   border: none;
@@ -127,7 +129,6 @@ body {
   padding: 4px 10px;
   cursor: pointer;
 }
-.btn.full { width: 100%; margin-top: 8px; }
 
 @media (max-width: 900px) {
   .top { flex-direction: column; align-items: flex-start; }
