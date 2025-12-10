@@ -103,7 +103,7 @@ function renderColumn(container, cards) {
   container.innerHTML = '';
   cards.forEach((card, index) => {
     const tile = document.createElement('button');
-    tile.className = 'tile';
+    tile.className = `tile ${card.kind}-tile`;
     tile.setAttribute('data-id', card.id);
     tile.setAttribute('data-kind', card.kind);
     tile.setAttribute('data-index', index.toString());
@@ -114,7 +114,8 @@ function renderColumn(container, cards) {
 
     const front = document.createElement('div');
     front.className = 'face front';
-    front.innerHTML = `<span>Flip me!</span>`;
+    front.style.backgroundImage = 'url(pictures/PatrickStar.png)';
+    front.innerHTML = `<span class="sr-only">Flip me</span>`;
 
     const back = document.createElement('div');
     back.className = `face back ${card.kind === 'question' ? 'question' : 'answer'}`;
