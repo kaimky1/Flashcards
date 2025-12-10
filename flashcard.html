@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Level-Up Flashcards — Kid Friendly Demo</title>
+<link rel="stylesheet" href="flashcard.css" />
+</head>
+<body>
+<div class="app">
+  <header>
+    <div>
+      <h1>Level-Up Flashcards — Demo</h1>
+      <div class="small muted">Customizable flashcards for kids — Elementary Math preloaded • Save progress locally</div>
+    </div>
+
+    <div class="controls">
+      <div class="stats">
+        <div>Score: <span id="score" class="score">0</span></div>
+        <div>|</div>
+        <div>Streak: <strong id="streak">0</strong></div>
+      </div>
+      <button class="btn" id="shuffleBtn">Shuffle Deck</button>
+      <button class="btn secondary" id="resetBtn">Reset Progress</button>
+    </div>
+  </header>
+
+  <div class="card-area">
+    <div class="panel flashcard" id="flashcard">
+      <div>
+        <div class="card-meta">
+          <div class="muted" id="cardType">Type: —</div>
+          <div class="muted" id="cardIndex">Card 0 / 0</div>
+        </div>
+
+        <div class="question" id="questionText">Loading...</div>
+        <div id="interactiveArea"></div>
+        <div class="feedback" id="feedback"></div>
+      </div>
+
+      <div>
+        <div class="row" style="justify-content:space-between; align-items:center;">
+          <div class="small muted">Subject: <strong id="subjectLabel">Custom</strong></div>
+          <div class="actions">
+            <button class="btn secondary" id="showAnswer">Show Answer</button>
+            <button class="btn" id="nextBtn">Next Card ▶</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="side-panel">
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div><strong>Deck Controls</strong></div>
+          <div class="muted small">Saved locally</div>
+        </div>
+
+        <div style="margin-top:10px;">
+          <label for="subjectInput">Subject name</label>
+          <input id="subjectInput" type="text" placeholder="e.g., Elementary Math" />
+        </div>
+
+        <div style="margin-top:10px;">
+          <label for="cardTypeSelect">New card type</label>
+          <select id="cardTypeSelect">
+            <option value="mc">Multiple Choice</option>
+            <option value="input">Type Answer</option>
+            <option value="flip">Flip (self-check)</option>
+          </select>
+        </div>
+
+        <div style="margin-top:10px;">
+          <label for="qText">Question</label>
+          <input id="qText" type="text" placeholder="Enter question" />
+        </div>
+
+        <div id="mcFields" style="display:none;margin-top:10px;">
+          <label>Choices (comma separated)</label>
+          <input id="mcChoices" type="text" placeholder="e.g., 3,4,5,6" />
+          <label style="margin-top:6px;">Correct choice (exact match)</label>
+          <input id="mcAnswer" type="text" placeholder="e.g., 4" />
+        </div>
+
+        <div id="inputFields" style="display:none;margin-top:10px;">
+          <label>Correct answer (exact match)</label>
+          <input id="inputAnswer" type="text" placeholder="e.g., 12" />
+        </div>
+
+        <div id="flipFields" style="display:none;margin-top:10px;">
+          <label>Back / Answer text</label>
+          <textarea id="flipBack" placeholder="Write the answer or explanation here"></textarea>
+        </div>
+
+        <div class="form-row">
+          <button class="btn" id="addCardBtn">Add Card</button>
+          <button class="btn secondary" id="importBtn">Reset to Preloaded</button>
+        </div>
+
+        <div style="margin-top:12px;">
+          <div class="small muted">Deck size: <strong id="deckSize">0</strong></div>
+          <div class="progress" style="margin-top:6px;">
+            <i id="progressBar"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <strong>How to play</strong>
+        <ol style="padding-left:18px; margin-top:8px; font-size:14px; color:var(--muted);">
+          <li>Read the question and answer using the options.</li>
+          <li>+1 point for each correct answer.</li>
+          <li>Flip cards let kids self-check — click "I knew this" to earn the point.</li>
+          <li>Progress is saved locally — clear with Reset Progress.</li>
+        </ol>
+        <div style="margin-top:8px;">
+          <button class="btn" id="soundToggle">Sound: ON</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <strong>Quick Actions</strong>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <button class="btn secondary" id="prevBtn">◀ Prev</button>
+          <button class="btn" id="markKnownBtn">I KNEW THIS</button>
+          <button class="btn secondary" id="exportBtn">Export Deck</button>
+        </div>
+        <div style="margin-top:8px;">
+          <textarea id="exportArea" placeholder="Exported JSON will appear here" style="width:100%;"></textarea>
+        </div>
+      </div>
+
+    </aside>
+  </div>
+
+  <footer class="muted">Built for a classroom demo • Refresh keeps deck but Reset Progress clears scores</footer>
+</div>
+
+<script src="flashcard.js"></script>
+</body>
+</html>
