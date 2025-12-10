@@ -1,24 +1,40 @@
 :root {
-  --bg:#f7f9fc; --card:#ffffff; --accent:#2b7cff; --muted:#6b7280;
-  --good:#16a34a; --bad:#ef4444; --radius:12px;
-  font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  --sand: #ffe79f;
+  --pineapple: #ffce3a;
+  --bubble: #7bd8ff;
+  --reef: #1362a3;
+  --reef-dark: #0e4b7c;
+  --answer: #c9f0ff;
+  --ink: #0c2740;
+  --muted: #1f3a5a;
+  --shadow: 0 10px 30px rgba(12, 39, 64, 0.18);
+  font-family: "Fredoka", "Patrick Hand", "Comic Sans MS", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
-html,body {
-    height: 100%; 
+
+* { box-sizing: border-box; }
+body {
     margin: 0; 
-    background: linear-gradient(180deg,#eef5ff 0%,
-    var(--bg) 100%);
+  background: #b9ecff;
+  color: var(--ink);
+  min-height: 100vh;
 }
-.app {
-  max-width: 960px; 
-  margin: 28px auto; 
-  padding: 20px;
+
+.reef {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px 18px 48px;
 }
-header {
-  display: flex;
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 18px;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 18px;
+}
+.hero-text h1 {
+  margin: 6px 0;
+  font-size: 36px;
+  letter-spacing: 0.4px;
 }
 h1 {
   font-size: 20px;
