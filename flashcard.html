@@ -10,72 +10,38 @@
 <link rel="stylesheet" href="flashcard.css" />
 </head>
 <body>
-<div class="app">
-  <header>
-    <div>
-      <h1>Level-Up Flashcards — Demo</h1>
-      <div class="small muted">Customizable flashcards for kids — Elementary Math preloaded • Save progress locally</div>
-    </div>
-
-    <div class="controls">
-      <div class="stats">
-        <div>Score: <span id="score" class="score">0</span></div>
-        <div>|</div>
-        <div>Streak: <strong id="streak">0</strong></div>
-      </div>
-      <button class="btn" id="shuffleBtn">Shuffle Deck</button>
-      <button class="btn secondary" id="resetBtn">Reset Progress</button>
-    </div>
-  </header>
-
-  <div class="card-area">
-    <div class="panel flashcard" id="flashcard">
-      <div>
-        <div class="card-meta">
-          <div class="muted" id="cardType">Type: —</div>
-          <div class="muted" id="cardIndex">Card 0 / 0</div>
+  <div class="reef">
+    <header class="hero">
+      <div class="hero-text">
+        <p class="eyebrow">Spongebob Math Match</p>
+        <h1>SpongeBob Math Match</h1>
+        <p class="lede">Flip a yellow question card and hunt for the matching blue answer. All pairs are quick, kid-friendly math.</p>
+        <div class="cta-row">
+          <button id="newRound" class="btn primary">New round</button>
+          <button id="resetStats" class="btn ghost">Reset stats</button>
         </div>
-
-        <div class="question" id="questionText">Loading...</div>
-        <div id="interactiveArea"></div>
-        <div class="feedback" id="feedback"></div>
+        <div class="status" id="status">Tap a question first, then match the answer side.</div>
       </div>
 
-      <div>
-        <div class="row" style="justify-content:space-between; align-items:center;">
-          <div class="small muted">Subject: <strong id="subjectLabel">Custom</strong></div>
-          <div class="actions">
-            <button class="btn secondary" id="showAnswer">Show Answer</button>
-            <button class="btn" id="nextBtn">Next Card ▶</button>
-          </div>
+      <div class="scoreboard">
+        <div class="stat">
+          <span>Matches</span>
+          <strong id="matches">0</strong>
+        </div>
+        <div class="stat">
+          <span>Tries</span>
+          <strong id="tries">0</strong>
+        </div>
+        <div class="stat">
+          <span>Streak</span>
+          <strong id="streak">0</strong>
+        </div>
+        <div class="stat pill">
+          <span>Pairs in round</span>
+          <strong id="pairsCount">0</strong>
         </div>
       </div>
-    </div>
-
-    <aside class="side-panel">
-      <div class="panel">
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-          <div><strong>Deck Controls</strong></div>
-          <div class="muted small">Saved locally</div>
-        </div>
-
-        <div style="margin-top:10px;">
-          <label for="subjectInput">Subject name</label>
-          <input id="subjectInput" type="text" placeholder="e.g., Elementary Math" />
-        </div>
-
-        <div style="margin-top:10px;">
-          <label for="cardTypeSelect">New card type</label>
-          <select id="cardTypeSelect">
-            <option value="mc">Multiple Choice</option>
-            <option value="input">Type Answer</option>
-            <option value="flip">Flip (self-check)</option>
-          </select>
-        </div>
-
-        <div style="margin-top:10px;">
-          <label for="qText">Question</label>
-          <input id="qText" type="text" placeholder="Enter question" />
+    </header>
         </div>
 
         <div id="mcFields" style="display:none;margin-top:10px;">
