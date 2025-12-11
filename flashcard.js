@@ -22,6 +22,7 @@ let currentSubject = 'math';
 let timerInterval = null;
 let elapsedSeconds = 0;
 let bestTimes = {};
+let previewTimer = null;
 const PREVIEW_MS = 5000;
 
 function loadCustomDecks() {
@@ -188,11 +189,12 @@ function renderBoards() {
 }
 
 function previewBoard() {
+  if (previewTimer) clearTimeout(previewTimer);
   lock = true;
   setStatus('Memorize the board!');
   document.querySelectorAll('.tile').forEach(tile => tile.classList.add('flipped'));
-  setTimeout(() => {
-    document.querySelectorAll('.tile').forEach(tile => tile.classList.remove('flipped', 'matched'));
+  previewTimer = setTimeout(() => {
+    document.querySelectorAll('.tile').forEach(tile => tile.classList.remove('flipped'));
     lock = false;
     startTimer();
     setStatus('Tap a question first, then match the answer side.');
