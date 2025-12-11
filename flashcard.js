@@ -96,26 +96,22 @@ function shuffle(arr) {
 
 function buildDeck(customPairs) {
   const pairs = customPairs && customPairs.length ? customPairs : createMathPairs();
+  const safePairs = pairs.map((pair, idx) => ({
+    ...pair,
+    id: pair.id || `pair-${Date.now()}-${idx}`
+  }));
   totalPairs = pairs.length;
   pairsCountEl.textContent = totalPairs;
-  questionCards = shuffle(pairs.map(pair => (
-        { 
-          id: pair.id || `pair-${Math.random()}`, 
-          kind: 'question', 
-          text: pair.question 
-        }
-      )
-    )
-  );
-  answerCards = shuffle(pairs.map(pair => (
-        { 
-          id: pair.id || `pair-${Math.random()}`, 
-          kind: 'answer', 
-          text: pair.answer 
-        }
-      )
-    )
-  );
+  questionCards = shuffle(safePairs.map(pair => ({
+    id: pair.id,
+    kind: 'question',
+    text: pair.question
+  })));
+  answerCards = shuffle(safePairs.map(pair => ({
+    id: pair.id,
+    kind: 'answer',
+    text: pair.answer
+  })));
   renderBoards();
   resetRoundStats();
   updateBestDisplay();
@@ -271,8 +267,8 @@ function checkForMatch() {
   if (cardsMatch()) {
     matches += 1;
     streak += 1;
-    firstPick.classList.add('matched');
-    secondPick.classList.add('matched');
+    firstPick.classList.add('flipped', 'matched');
+    secondPick.classList.add('flipped', 'matched');
     setStatus('Aye aye! You found a pair.');
     resetPicks();
     if (matches === totalPairs) {
@@ -288,9 +284,11 @@ function checkForMatch() {
   } else {
     streak = 0;
     setStatus('Not quite! Try again.');
+    const a = firstPick;
+    const b = secondPick;
     setTimeout(() => {
-      firstPick.classList.remove('flipped');
-      secondPick.classList.remove('flipped');
+      if (!a.classList.contains('matched')) a.classList.remove('flipped');
+      if (!b.classList.contains('matched')) b.classList.remove('flipped');
       resetPicks();
     }, 750);
   }
