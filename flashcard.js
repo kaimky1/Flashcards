@@ -62,7 +62,7 @@ function createMathPairs(count = 8) {
     let a = randomInt(1, 10);
     let b = randomInt(1, 10);
     if (op === '-') {
-      // Swap to ensure a > b
+      // Swap to ensure a > b, no negative numbers
       if (b > a) [a, b] = [b, a];
     }
     if (op === '×') {
@@ -223,18 +223,12 @@ function renderColumn(container, cards) {
 function handleFlip(tile, kind) {
   if (lock || tile.classList.contains('matched')) return;
 
-  // Prevent starting on the answer side.
-  if (!firstPick && kind !== 'question') {
-    setStatus('Start with a question card on the left side.');
-    return;
-  }
-
-  // Change selected question if a new one is chosen.
-  if (firstPick && !secondPick && kind === 'question') {
+  // Allow changing selection if clicking the same kind again.
+  if (firstPick && !secondPick && firstPick.dataset.kind === kind) {
     firstPick.classList.remove('flipped');
     tile.classList.add('flipped');
     firstPick = tile;
-    setStatus('Swapped question. Now find the matching answer!');
+    setStatus('Swapped selection. Now find the match!');
     return;
   }
 
@@ -242,7 +236,7 @@ function handleFlip(tile, kind) {
 
   if (!firstPick) {
     firstPick = tile;
-    setStatus('Now find the matching answer!');
+    setStatus('Now find the match!');
     return;
   }
 
