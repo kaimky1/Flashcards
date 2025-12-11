@@ -3,11 +3,9 @@ const questionInput = document.getElementById('questionInput');
 const answerInput = document.getElementById('answerInput');
 const addPairBtn = document.getElementById('addPair');
 const resetBtn = document.getElementById('resetForm');
-const copyBtn = document.getElementById('copyConfig');
 const saveBtn = document.getElementById('saveDeck');
 const savedSelect = document.getElementById('savedSelect');
 const pairList = document.getElementById('pairList');
-const configOutput = document.getElementById('configOutput');
 const saveStatus = document.getElementById('saveStatus');
 
 let pairs = [];
@@ -28,7 +26,6 @@ function renderPairs() {
     removeBtn.onclick = () => {
       pairs.splice(idx, 1);
       renderPairs();
-      writeConfig();
     };
     actions.appendChild(removeBtn);
     row.appendChild(q);
@@ -36,14 +33,6 @@ function renderPairs() {
     row.appendChild(actions);
     pairList.appendChild(row);
   });
-}
-
-function writeConfig() {
-  const config = {
-    subject: subjectInput.value || 'Custom Subject',
-    pairs: pairs.map(({ question, answer }) => ({ question, answer }))
-  };
-  configOutput.value = JSON.stringify(config, null, 2);
 }
 
 function loadDecks() {
@@ -72,7 +61,6 @@ addPairBtn.addEventListener('click', () => {
   questionInput.value = '';
   answerInput.value = '';
   renderPairs();
-  writeConfig();
 });
 
 resetBtn.addEventListener('click', () => {
@@ -81,12 +69,6 @@ resetBtn.addEventListener('click', () => {
   answerInput.value = '';
   pairs = [];
   renderPairs();
-  writeConfig();
-});
-
-copyBtn.addEventListener('click', () => {
-  configOutput.select();
-  document.execCommand('copy');
 });
 
 saveBtn.addEventListener('click', () => {
@@ -111,7 +93,6 @@ savedSelect.addEventListener('change', () => {
     pairs = [];
     subjectInput.value = '';
     renderPairs();
-    writeConfig();
     saveStatus.textContent = '';
     return;
   }
@@ -127,12 +108,8 @@ savedSelect.addEventListener('change', () => {
     )
   );
   renderPairs();
-  writeConfig();
   saveStatus.textContent = `Loaded "${deck.subject}". Add pairs and Save to update.`;
 });
 
-subjectInput.addEventListener('input', writeConfig);
-
 loadDecks();
 populateSavedSelect();
-writeConfig();
