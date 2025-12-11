@@ -122,14 +122,6 @@ body {
   position: relative;
   overflow: hidden;
 }
-.board-wrap::after {
-  content: "";
-  position: absolute;
-  inset: -80px;
-  background: radial-gradient(circle at 10% 10%, rgba(255, 255, 255, 0.35), transparent 30%),
-              radial-gradient(circle at 80% 90%, rgba(255, 255, 255, 0.25), transparent 30%);
-  pointer-events: none;
-}
 .boards {
   display: grid;
   grid-template-columns: repeat(2, minmax(220px, 1fr));

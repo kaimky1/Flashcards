@@ -98,8 +98,24 @@ function buildDeck(customPairs) {
   const pairs = customPairs && customPairs.length ? customPairs : createMathPairs();
   totalPairs = pairs.length;
   pairsCountEl.textContent = totalPairs;
-  questionCards = shuffle(pairs.map(pair => ({ id: pair.id || `pair-${Math.random()}`, kind: 'question', text: pair.question })));
-  answerCards = shuffle(pairs.map(pair => ({ id: pair.id || `pair-${Math.random()}`, kind: 'answer', text: pair.answer })));
+  questionCards = shuffle(pairs.map(pair => (
+        { 
+          id: pair.id || `pair-${Math.random()}`, 
+          kind: 'question', 
+          text: pair.question 
+        }
+      )
+    )
+  );
+  answerCards = shuffle(pairs.map(pair => (
+        { 
+          id: pair.id || `pair-${Math.random()}`, 
+          kind: 'answer', 
+          text: pair.answer 
+        }
+      )
+    )
+  );
   renderBoards();
   resetRoundStats();
   updateBestDisplay();

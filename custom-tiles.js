@@ -119,7 +119,13 @@ savedSelect.addEventListener('change', () => {
   const deck = decks.find(d => d.subject === subj);
   if (!deck) return;
   subjectInput.value = deck.subject;
-  pairs = deck.pairs.map(p => ({ question: p.question, answer: p.answer }));
+  pairs = deck.pairs.map(p => (
+      { 
+        question: p.question, 
+        answer: p.answer 
+      }
+    )
+  );
   renderPairs();
   writeConfig();
   saveStatus.textContent = `Loaded "${deck.subject}". Add pairs and Save to update.`;
